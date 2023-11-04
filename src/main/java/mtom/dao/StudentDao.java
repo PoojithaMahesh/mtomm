@@ -62,19 +62,78 @@ public class StudentDao {
 				
 			}else {
 				System.out.println("course is not present");
-			}
-			
-			
+			}	
 			
 		}else {
 			System.out.println("Sorry student id is not present");
+		}	
+	}
+	
+	
+	
+	public void updateStudent(int id,Student student) {
+		EntityManagerFactory entityManagerFactory=Persistence.createEntityManagerFactory("vinod");
+		EntityManager entityManager=entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction=entityManager.getTransaction();
+		Student dbStudent=entityManager.find(Student.class, id);
+		if(dbStudent!=null) {
+			entityTransaction.begin();
+			student.setId(id);
+			student.setCourses(dbStudent.getCourses());
+			entityManager.merge(student);
+			entityTransaction.commit();
+		}else {
+			System.out.println("Id is not present");
 		}
 		
-		
-		
-		
-		
 	}
+	
+	public void findStudent(int id) {
+		EntityManagerFactory entityManagerFactory=Persistence.createEntityManagerFactory("vinod");
+		EntityManager entityManager=entityManagerFactory.createEntityManager();
+		Student dbStudent=entityManager.find(Student.class, id);
+		if(dbStudent!=null) {
+			System.out.println(dbStudent);
+		}else {
+			System.out.println("Id is not present");
+		}
+	}
+	
+	
+	
+	public void deleteStudent(int id) {
+		EntityManagerFactory entityManagerFactory=Persistence.createEntityManagerFactory("vinod");
+		EntityManager entityManager=entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction=entityManager.getTransaction();
+		Student dbStudent=entityManager.find(Student.class, id);
+		if(dbStudent!=null) {
+//			id is present
+			entityTransaction.begin();
+			List<Courses> courses=dbStudent.getCourses();
+			for(Courses c:courses) {
+				List<Student> students=c.getStudents();
+				students.remove(dbStudent);
+				c.setStudents(students);	
+			}
+			entityManager.remove(dbStudent);
+			entityTransaction.commit();
+		}else {
+			System.out.println("id is not present");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
